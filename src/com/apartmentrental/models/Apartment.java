@@ -1,3 +1,4 @@
+package com.apartmentrental.models;
 public class Apartment {
     private int id;
     private String name;
