@@ -1,3 +1,5 @@
+package com.apartmentrental.controllers;
+
 import com.apartmentrental.models.Apartment;
 import com.apartmentrental.repositories.ApartmentRepository;
 
