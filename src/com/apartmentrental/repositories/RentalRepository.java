@@ -1,3 +1,4 @@
+package com.apartmentrental.repositories;
 import com.apartmentrental.data.PostgresDB;
 import com.apartmentrental.models.Rental;
 import com.apartmentrental.repositories.interfaces.IRentalRepository;
