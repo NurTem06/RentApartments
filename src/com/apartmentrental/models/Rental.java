@@ -1,3 +1,4 @@
+package com.apartmentrental.models;
 public class Rental {
     private int id;
     private int userId;
