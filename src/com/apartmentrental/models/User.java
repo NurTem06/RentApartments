@@ -8,7 +8,7 @@ public class User {
     private String phoneNumber;
     private String password;
     private double walletBalance;
-
+    private Role role;
     public User() {}
 
     public User(String firstName, String lastName, String username, String phoneNumber, String password, double walletBalance) {
@@ -24,7 +24,27 @@ public class User {
         this(firstName, lastName, username, phoneNumber, password, walletBalance);
         setId(id);
     }
+    public User(String firstName, String lastName, String username, String phoneNumber, String password, double walletBalance, Role role) {
+        this(firstName, lastName, username, phoneNumber, password, walletBalance);
+        setRole(role);
+    }
 
+    public User(int id, String firstName, String lastName, String username, String phoneNumber, String password, double walletBalance, String role) {
+        this(firstName, lastName, username, phoneNumber, password, walletBalance, Role.valueOf(role));
+        setId(id);
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public boolean hasRole(Role requiredRole) {
+        return this.role.ordinal() <= requiredRole.ordinal();
+    }
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -55,6 +75,7 @@ public class User {
                 ", username='" + username + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", walletBalance=" + walletBalance +
+                ", role=" + role +
                 '}';
     }
 }

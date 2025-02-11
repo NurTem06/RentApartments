@@ -7,7 +7,7 @@ import com.apartmentrental.repositories.interfaces.IUserRepository;
 import java.sql.*;
 
 public class UserRepository implements IUserRepository {
-    PostgresDB postgresDB = new PostgresDB("localhost:5432", "postgres","Nurislam2006","RentApartments");
+    PostgresDB postgresDB =  PostgresDB.getInstance();
 
     public void registerUser(String firstName, String lastName, String phone, String username, String password) {
         String sql = "INSERT INTO users (first_name, last_name, phone_number, username, password, wallet_balance) VALUES (?, ?, ?, ?, ?, 0)";
@@ -25,6 +25,20 @@ public class UserRepository implements IUserRepository {
         }
     }
 
+    public boolean changeUserRole(int userId, String role) {
+        String sql = "UPDATE users SET role = ? WHERE id = ?";
+        try (Connection conn = postgresDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, role);
+            stmt.setInt(2, userId);
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            System.out.println("Ошибка при обновлении роли пользователя: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
     public User loginUser(String username, String password) {
         String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
 
@@ -42,7 +56,8 @@ public class UserRepository implements IUserRepository {
                         rs.getString("phone_number"),
                         rs.getString("username"),
                         rs.getString("password"),
-                        rs.getDouble("wallet_balance")
+                        rs.getDouble("wallet_balance"),
+                        rs.getString("role")
                 );
             }
         } catch (SQLException e) {
