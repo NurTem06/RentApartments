@@ -1,5 +1,6 @@
 package com.apartmentrental.controllers;
 
+import com.apartmentrental.models.Role;
 import com.apartmentrental.models.User;
 import com.apartmentrental.repositories.UserRepository;
 
@@ -25,7 +26,7 @@ public class UserController {
             loggedInUser = userRepository.loginUser(username, password);
 
             if (loggedInUser != null) {
-                System.out.println("Добро пожаловать, " + loggedInUser.getFirstName() + "!");
+                System.out.println("Добро пожаловать, " + loggedInUser.getFirstName() +"! уровень доступа: "+ loggedInUser.getRole());
             } else {
                 System.out.println("Ошибка входа. Проверьте данные.");
             }
@@ -45,7 +46,37 @@ public class UserController {
             System.out.println("Регистрация прошла успешно!");
         }
     }
+    public void changeRole(int userId) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Выберите новую роль для пользователя:");
+        System.out.println("1. USER");
+        System.out.println("2. ADMIN");
+        System.out.println("3. MANAGER");
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // consume newline
 
+        String newRole;
+        switch (choice) {
+            case 1 -> newRole = "USER";
+            case 2 -> newRole = "ADMIN";
+            case 3 -> newRole = "MANAGER";
+            default -> {
+                System.out.println("Неверный выбор роли.");
+                return;
+            }
+        }
+
+        boolean success = userRepository.changeUserRole(userId, newRole);
+        if (success) {
+            System.out.println("Роль пользователя успешно изменена на " + newRole);
+            // Обновляем роль пользователя в объекте loggedInUser, если это текущий пользователь
+            if (loggedInUser != null && loggedInUser.getId() == userId) {
+                loggedInUser.setRole(Role.valueOf(newRole));
+            }
+        } else {
+            System.out.println("Не удалось изменить роль пользователя.");
+        }
+    }
     public User getLoggedInUser() {
         return loggedInUser;
     }

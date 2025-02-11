@@ -1,6 +1,4 @@
 package com.apartmentrental.data;
-
-
 import com.apartmentrental.data.interfaces.IDB;
 
 import java.sql.Connection;
@@ -12,14 +10,22 @@ public class PostgresDB implements IDB {
     private String username;
     private String password;
     private String dbName;
-
+    private static PostgresDB instance = null;
     private Connection connection;
 
-    public PostgresDB(String host, String username, String password, String dbName) {
+    private PostgresDB(String host, String username, String password, String dbName) {
         setHost(host);
         setUsername(username);
         setPassword(password);
         setDbName(dbName);
+    }
+
+
+    public static synchronized PostgresDB getInstance() {
+        if (instance == null) {
+            instance = new PostgresDB("localhost:5432", "postgres", "Nurislam2006", "RentApartments");
+        }
+        return instance;
     }
 
     public String getHost() {
@@ -57,16 +63,26 @@ public class PostgresDB implements IDB {
     @Override
     public synchronized Connection getConnection() {
         String connectionUrl = "jdbc:postgresql://" + host + "/" + dbName;
+        System.out.println("Attempting to connect to: " + connectionUrl);
         try {
             if (connection != null && !connection.isClosed()) {
+                System.out.println("Reusing existing connection.");
                 return connection;
             }
+            System.out.println("Loading JDBC driver...");
             Class.forName("org.postgresql.Driver");
+            System.out.println("Creating new connection...");
             connection = DriverManager.getConnection(connectionUrl, username, password);
+            System.out.println("Connection established successfully.");
             return connection;
-        } catch (Exception e) {
-            System.out.println("Failed to connect to database: " + e.getMessage());
+
+        } catch (ClassNotFoundException e) {
+            System.out.println("PostgreSQL JDBC Driver not found in classpath: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("Connection Failed! Check output console: " + e.getMessage());
+            e.printStackTrace();
         }
+        System.out.println("Failed to get connection, returning null.");
         return null;
     }
     @Override
@@ -80,4 +96,3 @@ public class PostgresDB implements IDB {
         }
     }
 }
-
