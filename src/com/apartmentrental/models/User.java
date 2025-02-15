@@ -1,17 +1,19 @@
 package com.apartmentrental.models;
 
-public class User {
-    private int id;
-    private String firstName;
-    private String lastName;
-    private String username;
-    private String phoneNumber;
-    private String password;
-    private double walletBalance;
-    private Role role;
-    public User() {}
+public abstract class User {
+    protected int id;
+    protected String firstName;
+    protected String lastName;
+    protected String username;
+    protected String phoneNumber;
+    protected String password;
+    protected double walletBalance;
+    protected Role role;
 
-    public User(String firstName, String lastName, String username, String phoneNumber, String password, double walletBalance) {
+    protected User() {}
+
+    // Базовый конструктор, который устанавливает все поля, кроме id и role
+    protected User(String firstName, String lastName, String username, String phoneNumber, String password, double walletBalance) {
         setFirstName(firstName);
         setLastName(lastName);
         setUsername(username);
@@ -20,31 +22,24 @@ public class User {
         setWalletBalance(walletBalance);
     }
 
-    public User(int id, String firstName, String lastName, String username, String phoneNumber, String password, double walletBalance) {
+    // Конструктор, который вызывает базовый и устанавливает id
+    protected User(int id, String firstName, String lastName, String username, String phoneNumber, String password, double walletBalance) {
         this(firstName, lastName, username, phoneNumber, password, walletBalance);
         setId(id);
     }
-    public User(String firstName, String lastName, String username, String phoneNumber, String password, double walletBalance, Role role) {
+
+    // Конструктор, который вызывает базовый и устанавливает role
+    protected User(String firstName, String lastName, String username, String phoneNumber, String password, double walletBalance, Role role) {
         this(firstName, lastName, username, phoneNumber, password, walletBalance);
         setRole(role);
     }
 
-    public User(int id, String firstName, String lastName, String username, String phoneNumber, String password, double walletBalance, String role) {
-        this(firstName, lastName, username, phoneNumber, password, walletBalance, Role.valueOf(role));
-        setId(id);
+    // Конструктор, который вызывает конструктор с id и затем устанавливает role
+    protected User(int id, String firstName, String lastName, String username, String phoneNumber, String password, double walletBalance, Role role) {
+        this(id, firstName, lastName, username, phoneNumber, password, walletBalance);
+        setRole(role);
     }
 
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public boolean hasRole(Role requiredRole) {
-        return this.role.ordinal() <= requiredRole.ordinal();
-    }
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -65,6 +60,12 @@ public class User {
 
     public double getWalletBalance() { return walletBalance; }
     public void setWalletBalance(double walletBalance) { this.walletBalance = walletBalance; }
+
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
+
+    public abstract boolean canPerformAdminActions();
+    public abstract boolean canPerformManagerActions();
 
     @Override
     public String toString() {

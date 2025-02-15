@@ -1,16 +1,16 @@
 package com.apartmentrental.repositories;
 
 import com.apartmentrental.data.PostgresDB;
-import com.apartmentrental.models.User;
+import com.apartmentrental.models.*;
 import com.apartmentrental.repositories.interfaces.IUserRepository;
 
 import java.sql.*;
 
 public class UserRepository implements IUserRepository {
-    PostgresDB postgresDB =  PostgresDB.getInstance();
+    PostgresDB postgresDB = PostgresDB.getInstance();
 
     public void registerUser(String firstName, String lastName, String phone, String username, String password) {
-        String sql = "INSERT INTO users (first_name, last_name, phone_number, username, password, wallet_balance) VALUES (?, ?, ?, ?, ?, 0)";
+        String sql = "INSERT INTO users (first_name, last_name, phone_number, username, password, wallet_balance, role) VALUES (?, ?, ?, ?, ?, 0, ?)";
 
         try (Connection conn = postgresDB.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -19,6 +19,7 @@ public class UserRepository implements IUserRepository {
             stmt.setString(3, phone);
             stmt.setString(4, username);
             stmt.setString(5, password);
+            stmt.setString(6, Role.USER.name());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -39,6 +40,7 @@ public class UserRepository implements IUserRepository {
             return false;
         }
     }
+
     public User loginUser(String username, String password) {
         String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
 
@@ -49,18 +51,32 @@ public class UserRepository implements IUserRepository {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return new User(
-                        rs.getInt("id"),
-                        rs.getString("first_name"),
-                        rs.getString("last_name"),
-                        rs.getString("phone_number"),
-                        rs.getString("username"),
-                        rs.getString("password"),
-                        rs.getDouble("wallet_balance"),
-                        rs.getString("role")
-                );
+                int id = rs.getInt("id");
+                String firstName = rs.getString("first_name");
+                String lastName = rs.getString("last_name");
+                String phoneNumber = rs.getString("phone_number");
+                String userUsername = rs.getString("username");
+                String userPassword = rs.getString("password");
+                double walletBalance = rs.getDouble("wallet_balance");
+                String roleString = rs.getString("role");
+                Role role = Role.valueOf(roleString);
+
+                switch (role) {
+                    case USER:
+                        return new RegularUser(id, firstName, lastName, userUsername, phoneNumber, userPassword, walletBalance);
+                    case ADMIN:
+                        return new AdminUser(id, firstName, lastName, userUsername, phoneNumber, userPassword, walletBalance);
+                    case MANAGER:
+                        return new ManagerUser(id, firstName, lastName, userUsername, phoneNumber, userPassword, walletBalance);
+                    default:
+
+                        return new RegularUser(id, firstName, lastName, userUsername, phoneNumber, userPassword, walletBalance);
+                }
             }
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            System.out.println("Неизвестная роль пользователя: " + e.getMessage());
             e.printStackTrace();
         }
         return null;
