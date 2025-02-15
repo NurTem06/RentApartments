@@ -1,7 +1,9 @@
 package com.apartmentrental.controllers;
 
+import com.apartmentrental.models.Apartment;
 import com.apartmentrental.models.FullRentalDescription;
 import com.apartmentrental.models.Rental;
+import com.apartmentrental.repositories.ApartmentRepository;
 import com.apartmentrental.repositories.RentalRepository;
 import com.apartmentrental.views.ConsoleView;
 
@@ -11,6 +13,8 @@ import java.util.Scanner;
 public class RentalController {
     private final RentalRepository rentalRepository = new RentalRepository();
     private final ConsoleView view = new ConsoleView();
+    private ApartmentRepository apartmentRepository = new ApartmentRepository();
+
     public void rentApartment(int userId) {
         Scanner scanner = new Scanner(System.in);
         boolean isValidInput = false;
@@ -59,6 +63,31 @@ public class RentalController {
                 view.displayMessage("Имя пользователя: " + description.getUserName());
                 view.displayMessage("ID квартиры: " + description.getApartmentId());
                 view.displayMessage("Название квартиры: " + description.getApartmentName());
+                view.displayMessage("Дата начала аренды: " + description.getStartDate());
+                view.displayMessage("Дата окончания аренды: " + description.getEndDate());
+                view.displayMessage("-----------------------------");
+            }
+        }
+    }
+    public void displayRentalDetailsWithApartmentCategory(int userId) {
+        List<FullRentalDescription> fullDescriptions = rentalRepository.getFullRentalDescriptionByUserId(userId);
+        if (fullDescriptions.isEmpty()) {
+            view.displayMessage("У пользователя с ID " + userId + " нет активных аренд.");
+        } else {
+            for (FullRentalDescription description : fullDescriptions) {
+                // Получаем Apartment по его ID из ApartmentRepository
+                List<Apartment> apartments = apartmentRepository.findApartmentByName(description.getApartmentName());
+                String category = "Неизвестная категория";
+                if (!apartments.isEmpty()) {
+                    category = apartments.get(0).getCategory();
+                }
+
+                view.displayMessage("ID аренды: " + description.getId());
+                view.displayMessage("ID пользователя: " + description.getUserId());
+                view.displayMessage("Имя пользователя: " + description.getUserName());
+                view.displayMessage("ID квартиры: " + description.getApartmentId());
+                view.displayMessage("Название квартиры: " + description.getApartmentName());
+                view.displayMessage("Категория квартиры: " + category);
                 view.displayMessage("Дата начала аренды: " + description.getStartDate());
                 view.displayMessage("Дата окончания аренды: " + description.getEndDate());
                 view.displayMessage("-----------------------------");

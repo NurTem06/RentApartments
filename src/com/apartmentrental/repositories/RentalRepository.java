@@ -95,3 +95,88 @@ public class RentalRepository implements IRentalRepository {
             e.printStackTrace();
         }
     }
+    //    @Override
+//    public void rentApartment(int userId, int apartmentId, String startDate, String durationType) {
+//        String sql = "INSERT INTO rentals (user_id, apartment_id, start_date, end_date, status) VALUES (?, ?, CAST(? AS DATE), CAST(? AS DATE), 'Active')";
+//
+//        try (Connection conn = postgresDB.getConnection();
+//             PreparedStatement stmt = conn.prepareStatement(sql)) {
+//            stmt.setInt(1, userId);
+//            stmt.setInt(2, apartmentId);
+//            stmt.setString(3, startDate);
+//            String endDate = calculateEndDate(startDate, durationType);
+//
+//            stmt.setString(4, endDate);
+//
+//            stmt.executeUpdate();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
+    public List<FullRentalDescription> getFullRentalDescriptionByUserId(int userId) {
+
+        List<FullRentalDescription> fullDescriptions = new ArrayList<>();
+        String sql = "SELECT r.id, r.user_id, u.first_name || ' ' || u.last_name AS user_name, " +
+                "r.apartment_id, a.name AS apartment_name, r.start_date, r.end_date " +
+                "FROM rentals r " +
+                "JOIN users u ON r.user_id = u.id " +
+                "JOIN apartments a ON r.apartment_id = a.id " +
+                "WHERE r.user_id = ?";
+
+        try (Connection conn = postgresDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                FullRentalDescription description = new FullRentalDescription(
+                        rs.getInt("id"),
+                        rs.getInt("user_id"),
+                        rs.getString("user_name"),
+                        rs.getInt("apartment_id"),
+                        rs.getString("apartment_name"),
+                        rs.getString("start_date"),
+                        rs.getString("end_date")
+                );
+                fullDescriptions.add(description);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return fullDescriptions;
+    }
+
+    @Override
+    public List<Rental> getRentalsByUserId(int userId) {
+        List<Rental> rentals = new ArrayList<>();
+        String sql = "SELECT * FROM rentals WHERE user_id = ?";
+
+        try (Connection conn = postgresDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                rentals.add(new Rental(rs.getInt("id"), rs.getInt("user_id"), rs.getInt("apartment_id"), rs.getString("start_date"), rs.getString("end_date"), rs.getString("status")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rentals;
+    }
+//    private String calculateEndDate(String startDate, String durationType) {
+//        String sql = "SELECT (CAST(? AS DATE) + INTERVAL '1 " + durationType + "')::DATE";
+//        try (Connection conn = postgresDB.getConnection();
+//             PreparedStatement stmt = conn.prepareStatement(sql)) {
+//            stmt.setString(1, startDate);
+//            ResultSet rs = stmt.executeQuery();
+//            if (rs.next()) {
+//                return rs.getString(1);
+//            }
+//        } catch (SQLException e) {
+//            System.out.println("Ошибка в calculateEndDate: " + e.getMessage());
+//            e.printStackTrace();
+//        }
+//        System.out.println("calculateEndDate вернул исходную дату: " + startDate);
+//        return startDate;
+//    }
+
+}
