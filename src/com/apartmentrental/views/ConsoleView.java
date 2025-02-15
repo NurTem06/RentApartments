@@ -1,4 +1,5 @@
 package com.apartmentrental.views;
+
 import com.apartmentrental.models.Apartment;
 import com.apartmentrental.models.Rental;
 import com.apartmentrental.models.User;

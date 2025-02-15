@@ -1,4 +1,5 @@
 package com.apartmentrental.models;
+
 public class FullRentalDescription {
     private int rentalId;
     private int userId;
