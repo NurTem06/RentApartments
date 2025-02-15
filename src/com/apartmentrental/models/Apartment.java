@@ -1,39 +1,36 @@
 package com.apartmentrental.models;
-public class Apartment {
-    private int id;
-    private String name;
-    private String city;
-    private String district;
-    private String street;
-    private int floor;
-    private int rooms;
-    private double pricePerDay;
-    private double pricePerMonth;
-    private double pricePerYear;
-    private String status;
-    private String availabilityDate;
-    private double rating;
 
-    public Apartment() {}
+public abstract class Apartment {
+    protected int id;
+    protected String name;
+    protected String city;
+    protected String district;
+    protected String street;
+    protected int floor;
+    protected int rooms;
+    protected double pricePerDay;
+    protected double pricePerMonth;
+    protected double pricePerYear;
+    protected String status;
+    protected String availabilityDate;
+    protected double rating;
 
-    public Apartment(String name, String city, String district, String street, int floor, int rooms, double pricePerDay, double pricePerMonth, double pricePerYear, String status, String availabilityDate, double rating) {
-        setName(name);
-        setCity(city);
-        setDistrict(district);
-        setStreet(street);
-        setFloor(floor);
-        setRooms(rooms);
-        setPricePerDay(pricePerDay);
-        setPricePerMonth(pricePerMonth);
-        setPricePerYear(pricePerYear);
-        setStatus(status);
-        setAvailabilityDate(availabilityDate);
-        setRating(rating);
-    }
+    protected Apartment() {}
 
-    public Apartment(int id, String name, String city, String district, String street, int floor, int rooms, double pricePerDay, double pricePerMonth, double pricePerYear, String status, String availabilityDate, double rating) {
-        this(name, city, district, street, floor, rooms, pricePerDay, pricePerMonth, pricePerYear, status, availabilityDate, rating);
-        setId(id);
+    protected Apartment(int id, String name, String city, String district, String street, int floor, int rooms, double pricePerDay, double pricePerMonth, double pricePerYear, String status, String availabilityDate, double rating) {
+        this.id = id;
+        this.name = name;
+        this.city = city;
+        this.district = district;
+        this.street = street;
+        this.floor = floor;
+        this.rooms = rooms;
+        this.pricePerDay = pricePerDay;
+        this.pricePerMonth = pricePerMonth;
+        this.pricePerYear = pricePerYear;
+        this.status = status;
+        this.availabilityDate = availabilityDate;
+        this.rating = rating;
     }
 
     public int getId() { return id; }
@@ -75,6 +72,8 @@ public class Apartment {
     public double getRating() { return rating; }
     public void setRating(double rating) { this.rating = rating; }
 
+    public abstract String getCategory();
+
     @Override
     public String toString() {
         return "Apartment{" +
@@ -91,6 +90,8 @@ public class Apartment {
                 ", status='" + status + '\'' +
                 ", availabilityDate='" + availabilityDate + '\'' +
                 ", rating=" + rating +
+                ", category='" + getCategory() + '\'' +
                 '}';
     }
 }
+
