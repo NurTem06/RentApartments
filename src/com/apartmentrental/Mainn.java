@@ -17,7 +17,6 @@ public class Mainn {
         RentalController rentalController = new RentalController();
 
         userController. start();
-
         User loggedInUser = userController.getLoggedInUser();
         while (loggedInUser == null) {
             Scanner scanner = new Scanner(System.in);
@@ -31,7 +30,6 @@ public class Mainn {
                 return;
             }
         }
-
         while (true) {
             view.displayMessage("\nВыберите действие:");
             if (userController.getLoggedInUser().getRole() == Role.ADMIN){

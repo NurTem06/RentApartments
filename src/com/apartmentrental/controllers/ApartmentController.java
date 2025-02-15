@@ -1,5 +1,8 @@
 package com.apartmentrental.controllers;
+
 import com.apartmentrental.models.Apartment;
+import com.apartmentrental.models.BusinessApartment;
+import com.apartmentrental.models.EconomyApartment;
 import com.apartmentrental.repositories.ApartmentRepository;
 import com.apartmentrental.views.ConsoleView;
 
@@ -20,14 +23,14 @@ public class ApartmentController {
         view.displayMessage("Доступные квартиры:");
         view.displayMessage("Категория: Эконом (до 5000 тг/день)");
         for (Apartment apartment : apartments) {
-            if (apartment.getPricePerDay() < 5000) {
+            if (apartment instanceof EconomyApartment) {
                 displayApartmentDetails(apartment);
             }
         }
 
         view.displayMessage("\nКатегория: Бизнес (от 5000 тг/день и выше)");
         for (Apartment apartment : apartments) {
-            if (apartment.getPricePerDay() >= 5000) {
+            if (apartment instanceof BusinessApartment) {
                 displayApartmentDetails(apartment);
             }
         }
@@ -41,7 +44,7 @@ public class ApartmentController {
                 apartment.getPricePerDay() + " | Цена за месяц: " +
                 apartment.getPricePerMonth() + " | Цена за год: " +
                 apartment.getPricePerYear() + " | Доступность: " +
-                apartment.getStatus());
+                apartment.getStatus() + " | Категория: " + apartment.getCategory());
     }
 
     public void searchApartmentByName() {
