@@ -1,4 +1,6 @@
 package com.apartmentrental.data;
+
+
 import com.apartmentrental.data.interfaces.IDB;
 
 import java.sql.Connection;
@@ -23,7 +25,7 @@ public class PostgresDB implements IDB {
 
     public static synchronized PostgresDB getInstance() {
         if (instance == null) {
-            instance = new PostgresDB("localhost:5432", "postgres", "Nurislam2006", "RentApartments");
+            instance = new PostgresDB("localhost:5432", "postgres", "20061616", "postgres");
         }
         return instance;
     }
@@ -96,3 +98,4 @@ public class PostgresDB implements IDB {
         }
     }
 }
+
